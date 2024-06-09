@@ -1,6 +1,6 @@
 # Digital Drugs Technologies
 
-![](https://github.com/keetsta/.github/blob/1faeedf62882cd677682de364a3f160b59f0de93/logo.png?raw=true)
+![](https://github.com/digitaldrugstech/.github/blob/main/logo.png)
 
 Welcome to DDTech, our team develops a wide range of products
 
