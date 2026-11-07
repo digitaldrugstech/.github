@@ -1,0 +1,123 @@
+{
+  "$schema": "https://docs.renovatebot.com/renovate-schema.json",
+  "description": "PRDX org-wide Renovate defaults. Use in a repo's renovate.json: { \"extends\": [\"local>digitaldrugstech/.github\"] }",
+  "extends": [
+    "config:recommended",
+    ":semanticCommits",
+    ":dependencyDashboard"
+  ],
+  "timezone": "UTC",
+  "schedule": ["before 7am on monday"],
+  "labels": ["dependencies"],
+  "semanticCommitType": "chore",
+  "semanticCommitScope": "deps",
+  "prConcurrentLimit": 10,
+  "prHourlyLimit": 4,
+  "rebaseWhen": "behind-base-branch",
+  "automerge": false,
+  "git-submodules": {
+    "enabled": false
+  },
+  "vulnerabilityAlerts": {
+    "labels": ["dependencies", "security"],
+    "semanticCommitType": "fix",
+    "schedule": ["at any time"]
+  },
+  "osvVulnerabilityAlerts": true,
+  "packageRules": [
+    {
+      "description": "Minor and patch updates (and pins/digests) merge themselves once CI is green. Majors never do.",
+      "matchUpdateTypes": ["minor", "patch", "pin", "pinDigest", "digest"],
+      "automerge": true,
+      "automergeType": "pr"
+    },
+    {
+      "description": "0.x versions treat a minor bump as breaking: no auto-merge.",
+      "matchCurrentVersion": "/^0\\./",
+      "matchUpdateTypes": ["minor"],
+      "automerge": false
+    },
+    {
+      "description": "Majors get their own PR and a label, reviewed by a human or agent.",
+      "matchUpdateTypes": ["major"],
+      "automerge": false,
+      "labels": ["dependencies", "major"]
+    },
+    {
+      "description": "Group Go module updates into one weekly PR.",
+      "matchManagers": ["gomod"],
+      "matchUpdateTypes": ["minor", "patch"],
+      "groupName": "go modules"
+    },
+    {
+      "description": "grpc and protobuf move together (generated code is pinned in ci-complete and the Dockerfile).",
+      "matchManagers": ["gomod"],
+      "matchPackageNames": [
+        "google.golang.org/grpc",
+        "google.golang.org/protobuf",
+        "github.com/golang/protobuf"
+      ],
+      "groupName": "grpc and protobuf"
+    },
+    {
+      "description": "Go toolchain (go directive and golang base images) moves together.",
+      "matchDatasources": ["golang-version", "docker"],
+      "matchPackageNames": ["go", "golang"],
+      "groupName": "go toolchain"
+    },
+    {
+      "description": "Group Gradle (Kotlin plugin) dependency updates.",
+      "matchManagers": ["gradle", "gradle-wrapper"],
+      "matchUpdateTypes": ["minor", "patch"],
+      "groupName": "gradle dependencies"
+    },
+    {
+      "description": "Minecraft/Paper version bumps are deliberate, never automatic.",
+      "matchPackageNames": ["io.papermc.paper:paper-api"],
+      "enabled": false
+    },
+    {
+      "description": "Group Python dependency updates.",
+      "matchManagers": ["pip_requirements", "pep621", "poetry", "pip_setup"],
+      "matchUpdateTypes": ["minor", "patch"],
+      "groupName": "python dependencies"
+    },
+    {
+      "description": "Group npm dependency updates.",
+      "matchManagers": ["npm"],
+      "matchUpdateTypes": ["minor", "patch"],
+      "groupName": "npm dependencies"
+    },
+    {
+      "description": "Group Docker base image updates.",
+      "matchManagers": ["dockerfile", "docker-compose"],
+      "matchUpdateTypes": ["minor", "patch", "digest", "pin", "pinDigest"],
+      "groupName": "docker base images"
+    },
+    {
+      "description": "Group third-party GitHub Actions and pin them by digest.",
+      "matchManagers": ["github-actions"],
+      "matchUpdateTypes": ["minor", "patch", "digest", "pin", "pinDigest"],
+      "groupName": "github actions",
+      "pinDigests": true,
+      "semanticCommitType": "ci"
+    },
+    {
+      "description": "ci-complete reusable workflow pins (release-flow spec section 4): keep the full-SHA pin with its version comment current, any update type, merge on green, no schedule.",
+      "matchManagers": ["github-actions"],
+      "matchPackageNames": ["digitaldrugstech/ci-complete"],
+      "groupName": "ci-complete",
+      "pinDigests": true,
+      "automerge": true,
+      "automergeType": "pr",
+      "schedule": ["at any time"],
+      "semanticCommitType": "ci",
+      "labels": ["dependencies", "ci-complete"]
+    },
+    {
+      "description": "Prod images are bumped by the service-release workflow in manifests (tag + digest). Renovate must not fight it.",
+      "matchPackageNames": ["ghcr.io/digitaldrugstech/**"],
+      "enabled": false
+    }
+  ]
+}
